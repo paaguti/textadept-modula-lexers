@@ -1,5 +1,5 @@
--- Copyright 2006-2023 Mitchell. See LICENSE.
--- Pascal LPeg lexer.
+-- Copyright 2023 paaguti@hotmail.com. See LICENSE.
+-- Modula-2 LPeg lexer.
 
 local lexer = require('lexer')
 local token, word_match = lexer.token, lexer.word_match
