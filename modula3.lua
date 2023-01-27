@@ -5,7 +5,7 @@ local lexer = require('lexer')
 local token, word_match = lexer.token, lexer.word_match
 local P, S, R = lpeg.P, lpeg.S, lpeg.R
 
-local lex = lexer.new('modula2')
+local lex = lexer.new('modula3')
 
 -- Whitespace.
 lex:add_rule('whitespace', token(lexer.WHITESPACE, lexer.space^1))

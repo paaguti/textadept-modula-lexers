@@ -42,7 +42,7 @@ lex:add_rule('type', token(lexer.TYPE, word_match({
 -- Constants
 lex:add_rule('constant', token(lexer.CONSTANT, word_match({
   'FALSE', 'TRUE', 'NIL'
-}, false)
+}, false)))
 
 -- Strings.
 --lex:add_rule('string', token(lexer.STRING, S('uUrR')^-1 * lexer.range("'", true, false)))
