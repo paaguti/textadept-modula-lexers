@@ -1,11 +1,11 @@
--- Copyright 2023 paaguti@gmail.com. See LICENSE.
--- Modula-3 LPeg lexer.
+-- Copyright 2023 paagutigmail.com. See LICENSE.
+-- MODULA-3 LPeg lexer.
 
 local lexer = require('lexer')
 local token, word_match = lexer.token, lexer.word_match
 local P, S, R = lpeg.P, lpeg.S, lpeg.R
 
-local lex = lexer.new('modula2')
+local lex = lexer.new('modula3')
 
 -- Whitespace.
 lex:add_rule('whitespace', token(lexer.WHITESPACE, lexer.space^1))
@@ -34,7 +34,7 @@ lex:add_rule('function', token(lexer.FUNCTION, word_match({
 'ADR', 'CEILING', 'FIRST', 'LAST', 'MUTEX', 'ORD',
 'ADRSIZE', 'NARROW', 'TRUNC',
 'BITSIZE', 'DEC', 'FLOOR', 'NEW', 'REFANY', 'TYPECODE',
-'DISPOSE', 'INC', 'LOOPHOLE', 'NIL', 'VAL',
+'DISPOSE', 'INC', 'LOOPHOLE', 'VAL',
 }, false)))
 
 -- Types.
@@ -62,12 +62,14 @@ lex:add_rule('comment', token(lexer.COMMENT, lexer.range('(*', '*)')))
 local pragma = token(lexer.PREPROCESSOR, lexer.range('<*','*>'))
 lex:add_rule('preprocessor' , pragma)
 -- Numbers.
-local modula_octal = R("07")^1*R("BC")
-local modula_dec   = R("09")^1
-local modula_hex   = (R("09")+R("AF"))^1*P("H")
-local modula_real  = R("09")^1*(P(".")*R("09")^1)^-1*P("E")*S("+-")^-1*R("09")^1
-lex:add_rule('number', token(lexer.NUMBER, modula_octal + modula_dec +
-                                           modula_hex + modula_real))
+local modula_exp   = S("E")*S("+-")^-1*R("09")^1
+local modula_rest  = P(".")*R("09")^1
+-- This can be a decimal or a real
+local modula_number  = S("+-")^-1 * R("09")^1 * modula_rest^-1 * modula_exp^-1
+lex:add_rule('number',
+  token(lexer.NUMBER,
+    R("09","AF")^1*S("H") + R("07")^1*S("BC") + modula_number))
+
 -- Operators.
 lex:add_rule('operator', token(lexer.OPERATOR, S('.,;^&:=<>+-/*()[]')))
 
