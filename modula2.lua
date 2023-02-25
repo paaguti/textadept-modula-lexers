@@ -42,10 +42,10 @@ lex:add_rule('type', token(lexer.TYPE, word_match({
 -- Constants
 lex:add_rule('constant', token(lexer.CONSTANT, word_match({
   'FALSE', 'TRUE', 'NIL'
-}, false)
+}, false)))
 
 -- Strings.
---lex:add_rule('string', token(lexer.STRING, S('uUrR')^-1 * lexer.range("'", true, false)))
+-- lex:add_rule('string', token(lexer.STRING, S('uUrR')^-1 * lexer.range("'", true, false)))
 local modula_string = lexer.range("\"", true, false)
 local modula_char = S("'")*P(1)*S("'")
 lex:add_rule('string', token(lexer.STRING, modula_string + modula_char))
@@ -58,14 +58,13 @@ lex:add_rule('comment', token(lexer.COMMENT, lexer.range('(*', '*)')))
 
 -- Numbers.
 local modula_octal = R("07")^1*R("BC")
-local modula_dec   = R("09")^1
 local modula_hex   = (R("09")+R("AF"))^1*P("H")
-local modula_real  = R("09")^1*(P(".")*R("09")^1)^-1*P("E")*S("+-")^-1*R("09")^1
-lex:add_rule('number', token(lexer.NUMBER, modula_octal + modula_dec +
-                                           modula_hex + modula_real))
+local modula_exp   = S("E")*S("+-")^-1*R("09")^1
+local modula_rest = S(".")*R("09")^1
+local modula_real  = S("-")^-1*R("09")^1*modula_rest^-1*modula_exp^-1
+lex:add_rule('number', token(lexer.NUMBER, modula_octal + modula_hex +
+                                           modula_real))
 -- Operators.
 lex:add_rule('operator', token(lexer.OPERATOR, S('.,;^&:=<>+-/*()[]')))
-
-lexer.property['scintillua.comment'] = '//'
 
 return lex
